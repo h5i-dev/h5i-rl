@@ -1,0 +1,22 @@
+# h5i verbs exposed to verl's ToolAgentLoop. One H5iTool instance per verb; the
+# OpenAI schema for each comes from H5iTool.get_openai_tool_schema (reused from
+# agent/tools.py), so tool_schema is intentionally omitted here.
+#
+# Loaded via actor_rollout_ref.rollout.multi_turn.tool_config_path in grpo.yaml.
+# H5iTool lives in train/h5i_tool.py, so train/ must be on PYTHONPATH (run_grpo.sh
+# sets it).
+tools:
+  - class_name: "h5i_tool.H5iTool"
+    config: {type: native, verb: browser_open}
+  - class_name: "h5i_tool.H5iTool"
+    config: {type: native, verb: browser_snapshot}
+  - class_name: "h5i_tool.H5iTool"
+    config: {type: native, verb: recon}
+  - class_name: "h5i_tool.H5iTool"
+    config: {type: native, verb: websec_requests}
+  - class_name: "h5i_tool.H5iTool"
+    config: {type: native, verb: websec_show}
+  - class_name: "h5i_tool.H5iTool"
+    config: {type: native, verb: websec_replay}
+  - class_name: "h5i_tool.H5iTool"
+    config: {type: native, verb: websec_diff}

@@ -1,0 +1,105 @@
+suite,slug,level,builds,runs,reachable,secs,note
+xbow,XBEN-001-24,2,0,0,0,13.1,apt-eol-404
+xbow,XBEN-002-24,2,0,0,0,5.0,apt-eol-404
+xbow,XBEN-003-24,2,0,0,0,4.9,apt-eol-404
+xbow,XBEN-004-24,2,0,0,0,1.3,apt-eol-404
+xbow,XBEN-005-24,1,1,1,1,49.9,
+xbow,XBEN-006-24,1,1,0,0,2.4,port-conflict
+xbow,XBEN-007-24,2,0,0,0,6.1,apt-eol-404
+xbow,XBEN-008-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-009-24,1,1,1,1,30.3,probe:HTTPError
+xbow,XBEN-010-24,3,0,0,0,1.3,apt-eol-404
+xbow,XBEN-011-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-012-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-013-24,1,0,0,0,1.2,apt-eol-404
+xbow,XBEN-014-24,2,1,1,1,22.4,
+xbow,XBEN-015-24,2,0,0,0,1.3,apt-eol-404
+xbow,XBEN-016-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-017-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-018-24,3,0,0,0,1.2,apt-eol-404
+xbow,XBEN-019-24,1,0,0,0,7.1,apt-eol-404
+xbow,XBEN-020-24,1,0,0,0,14.7,apt-eol-404
+xbow,XBEN-021-24,1,1,1,1,24.7,
+xbow,XBEN-022-24,2,0,0,0,5.1,apt-eol-404
+xbow,XBEN-023-24,2,0,0,0,5.0,apt-eol-404
+xbow,XBEN-024-24,1,1,1,1,35.2,
+xbow,XBEN-025-24,2,0,0,0,7.8,apt-eol-404
+xbow,XBEN-026-24,1,0,0,0,5.6,apt-eol-404
+xbow,XBEN-027-24,2,0,0,0,7.2,apt-eol-404
+xbow,XBEN-028-24,2,1,1,1,25.9,
+xbow,XBEN-029-24,2,1,1,1,90.4,
+xbow,XBEN-030-24,2,1,0,0,34.2,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-031-24,1,0,0,0,2.6,apt-eol-404
+xbow,XBEN-032-24,1,1,1,1,20.2,
+xbow,XBEN-033-24,1,1,1,1,27.0,
+xbow,XBEN-034-24,1,1,1,1,88.9,
+xbow,XBEN-035-24,2,0,0,0,37.1,apt-eol-404
+xbow,XBEN-036-24,1,1,1,1,17.1,
+xbow,XBEN-037-24,1,1,1,1,30.3,
+xbow,XBEN-038-24,1,1,1,1,17.1,
+xbow,XBEN-039-24,1,0,0,0,16.8,apt-eol-404
+xbow,XBEN-040-24,2,0,0,0,3.7,apt-eol-404
+xbow,XBEN-041-24,1,0,0,0,10.9,apt-eol-404
+xbow,XBEN-042-24,1,1,1,1,38.8,
+xbow,XBEN-043-24,2,0,0,0,8.2,apt-eol-404
+xbow,XBEN-044-24,1,0,0,0,14.3,apt-eol-404
+xbow,XBEN-045-24,1,1,1,1,23.4,
+xbow,XBEN-046-24,2,0,0,0,1.6,apt-eol-404
+xbow,XBEN-047-24,1,0,0,0,1.2,apt-eol-404
+xbow,XBEN-048-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-049-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-050-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-051-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-052-24,1,1,1,1,13.3,
+xbow,XBEN-053-24,1,1,1,1,12.3,
+xbow,XBEN-054-24,2,1,1,1,13.3,probe:HTTPError
+xbow,XBEN-055-24,2,1,1,1,13.2,
+xbow,XBEN-056-24,2,0,0,0,7.8,apt-eol-404
+xbow,XBEN-057-24,3,0,0,0,5.6,apt-eol-404
+xbow,XBEN-058-24,1,1,0,0,13.6,port-conflict
+xbow,XBEN-059-24,1,0,0,0,1.2,apt-eol-404
+xbow,XBEN-060-24,2,1,1,1,13.3,
+xbow,XBEN-061-24,1,1,1,1,15.1,
+xbow,XBEN-062-24,1,0,0,0,1.3,apt-eol-404
+xbow,XBEN-063-24,2,0,0,0,8.4,apt-eol-404
+xbow,XBEN-064-24,1,0,0,0,1.5,apt-eol-404
+xbow,XBEN-065-24,1,0,0,0,1.2,apt-eol-404
+xbow,XBEN-066-24,3,0,0,0,5.6,apt-eol-404
+xbow,XBEN-067-24,1,0,0,0,1.2,apt-eol-404
+xbow,XBEN-068-24,2,1,1,1,30.8,
+xbow,XBEN-069-24,2,1,1,1,27.5,
+xbow,XBEN-070-24,1,0,0,0,1.3,apt-eol-404
+xbow,XBEN-071-24,1,1,0,0,36.9,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-072-24,1,1,1,1,13.4,
+xbow,XBEN-073-24,1,1,1,1,23.3,
+xbow,XBEN-074-24,1,0,0,0,1.7,apt-eol-404
+xbow,XBEN-075-24,2,0,0,0,5.8,apt-eol-404
+xbow,XBEN-076-24,1,1,1,1,32.5,
+xbow,XBEN-077-24,1,1,1,1,13.6,
+xbow,XBEN-078-24,2,0,0,0,4.3,apt-eol-404
+xbow,XBEN-079-24,2,1,0,0,2.6,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-080-24,2,1,0,0,14.6,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-081-24,2,0,0,0,14.2,apt-eol-404
+xbow,XBEN-082-24,2,1,0,0,10.7,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-083-24,1,0,0,0,3.6,apt-eol-404
+xbow,XBEN-084-24,1,1,0,0,117.8,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-085-24,1,1,0,0,2.1,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-086-24,2,1,0,0,37.7,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-087-24,3,0,0,0,1.7,apt-eol-404
+xbow,XBEN-088-24,3,0,0,0,9.1,apt-eol-404
+xbow,XBEN-089-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-090-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-091-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-092-24,2,0,0,0,5.0,apt-eol-404
+xbow,XBEN-093-24,3,0,0,0,1.2,apt-eol-404
+xbow,XBEN-094-24,2,0,0,0,1.2,apt-eol-404
+xbow,XBEN-095-24,1,1,0,0,2.0,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-096-24,1,1,0,0,7.5,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-097-24,2,0,0,0,25.4,apt-eol-404
+xbow,XBEN-098-24,1,0,0,0,4.3,apt-eol-404
+xbow,XBEN-099-24,2,1,0,0,38.4,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-100-24,2,0,0,0,2.7,apt-eol-404
+xbow,XBEN-101-24,3,1,0,0,11.7,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-102-24,1,1,0,0,5.9,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-103-24,2,1,0,0,8.6,make: *** [../../common.mk:66: run] Error 1
+xbow,XBEN-104-24,2,0,0,0,9.9,apt-eol-404

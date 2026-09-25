@@ -8,3 +8,6 @@ wandb/
 .venv/
 __pycache__/
 *.pyc
+# Generated pool + dataset
+data/
+pool_manifest.json

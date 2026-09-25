@@ -62,15 +62,19 @@ rl/
   env/
     fetch_benchmarks.sh   # clone xbow + argus suites into env/benchmarks/ (gitignored)
     challenge.py          # uniform Challenge interface: build, up, base_url, flag, canaries, down
+    serve_pool.py         # (env/) bring up a persistent pool of challenges + emit the verl parquet
   agent/
     tools.py              # h5i command surface as JSON tool schemas the policy calls
     rollout.py            # run ONE episode -> token-level trajectory + reward
   reward/
     reward.py             # capture-backed terminal reward + shaping + canary/scope penalties
   train/
-    grpo.yaml             # verl config: Qwen3-4B, LoRA, GRPO, vLLM rollout
-    run_grpo.sh           # launcher
-    agent_loop.py         # verl <-> rollout.py adapter  (version-specific glue: see TODOs)
+    h5i_tool.py           # h5i verbs as verl BaseTools (verl 0.9.1); per-rollout isolated session
+    h5i_tools.yaml        # tool-config: lists the h5i verbs for verl's ToolAgentLoop
+    h5i_reward.py         # verl custom reward: capture-backed flag + canary penalty over the trajectory
+    grpo.yaml             # documented reference for the run (run_grpo.sh is the runnable truth)
+    run_grpo.sh           # launcher: verl GRPO with the h5i tool/agent/reward wired in
+    agent_loop.py         # standalone (non-verl) episode sampler + the curriculum selector
   eval/
     smoke.sh              # sanity: can one challenge stand up and be reached?
     build_sweep.py        # which challenges build+run today -> build_sweep.csv (the trainable pool)
@@ -93,32 +97,43 @@ python -m eval.confirm_solve             # assert the capture-backed +1.0 reward
 # 1b. quick single-challenge sanity
 ./eval/smoke.sh xbow XBEN-053-24
 
-# 2. serve the policy for rollouts (small model; leaves cards for LoRA training)
-MODEL=Qwen/Qwen3-4B ../vault-ctf/scripts/serve-model.sh   # or verl's own rollout engine
+# 2. one rollout end-to-end (no training) to eyeball trajectories + reward
+MODEL=Qwen/Qwen3-4B ../vault-ctf/scripts/serve-model.sh &   # policy on an OpenAI endpoint
+python -m agent.rollout --suite xbow --challenge XBEN-053-24 --max-turns 25
 
-# 3. one rollout end-to-end (no training) to eyeball trajectories + reward
-python -m agent.rollout --suite xbow --challenge XBEN-001-24 --max-turns 25
-
-# 4. GRPO training
-./train/run_grpo.sh
+# 3. GRPO training (verl-native: h5i tools + ToolAgentLoop + capture-backed reward)
+python -m env.serve_pool --n 8 --out data    # persistent challenge pool + parquet dataset
+./train/run_grpo.sh                          # needs verl venv (torch cu124) + free GPUs
+python -m env.serve_pool --down              # tear the pool down when finished
 ```
 
 ## Guardrails that are part of the design
 
-- **Scope containment.** The reward penalizes any request whose host is not the
-  challenge's own container. This is the same discipline h5i's skill preaches,
-  and it keeps a trained policy from learning to wander off-target.
-- **No reward hacking on a fixed string.** Flags are re-injected per episode
-  (XBOW) or read from the challenge's answer key (Argus); the policy cannot
-  memorize one literal. Canaries turn "grabbed a decoy" into a negative signal.
+- **Scope containment.** In the verl path it is enforced by construction:
+  `browser_open` only ever opens the challenge's own base_url, never a URL the
+  policy supplies. The standalone reward additionally penalizes any
+  agent-initiated request to another host.
+- **No reward hacking on a fixed string.** Flags are re-injected per run (a fresh
+  random value each time the pool comes up), so the policy cannot memorize a
+  literal, and an unguessable flag appearing in the trajectory can only mean it
+  was extracted through h5i. Canaries turn "grabbed a decoy" into a negative
+  signal.
 - **Offline only.** Containers run on an internal Docker network; nothing here is
   pointed at the internet or at anyone else's infrastructure.
 
 ## What still needs deciding / doing
 
-- **verl version glue** (`train/agent_loop.py`): verl's multi-turn/agent-loop API
-  moves between releases. The adapter is written against the async server-mode
-  rollout; pin it to the verl commit you install and fill the marked TODOs.
+- **verl integration: done (verl 0.9.1), import-verified.** h5i is expressed as
+  verl `BaseTool`s (`train/h5i_tool.py`, `h5i_tools.yaml`) driven by verl's
+  ToolAgentLoop, with `train/h5i_reward.py` as the reward and `env/serve_pool.py`
+  producing the pool + dataset. The tool config, tool schemas and reward all load
+  and score correctly against an installed verl 0.9.1.
+- **Before an actual GPU run** (two environment gates, not code):
+  (1) The verl venv's default torch is a **cu130** wheel, but this box's driver is
+  **CUDA 12.6** — reinstall torch built for cu124 (or cu121) plus a matching
+  `vllm`, or verl will refuse to use the GPUs. (2) The eval vLLM server fills all
+  4 cards; **stop it first** so training has memory. Then `env/serve_pool.py` +
+  `train/run_grpo.sh`.
 - **h5i-side changes (the `h5i` `rl-env` branch).** Two would materially help and
   belong in h5i, not here: (1) a `--json` flag on every read verb so observations
   are structured for *all* commands, not just `websec requests`; (2) a clean
