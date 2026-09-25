@@ -25,7 +25,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from env.challenge import split                 # noqa: E402
+from env.challenge import buildable             # noqa: E402
 from agent.rollout import run_episode           # noqa: E402
 
 
@@ -42,10 +42,13 @@ def sample_episode(challenge, model: str | None = None) -> dict:
 
 
 def train_challenges(seed: int = 0):
-    train, _ = split(seed=seed)
+    # xbow is the clean flag-capture path (argus needs a docker-compose v1 shim);
+    # restrict to the sweep-verified buildable subset so rollouts never stall on
+    # a challenge that cannot come up.
+    cs = buildable("xbow")
     # curriculum: start on the easiest tier; widen once solve-rate is stable.
-    level1 = [c for c in train if c.level == 1]
-    return level1 or train
+    level1 = [c for c in cs if c.level == 1]
+    return level1 or cs
 
 
 # ---- TODO(verl-version): register with verl's agent-loop machinery ----------

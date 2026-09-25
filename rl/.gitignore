@@ -1,5 +1,5 @@
 # Cloned benchmark suites (large, own upstreams)
-env/benchmarks/
+env/benchmarks
 # Training artifacts
 checkpoints/
 wandb/

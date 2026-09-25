@@ -72,7 +72,10 @@ rl/
     run_grpo.sh           # launcher
     agent_loop.py         # verl <-> rollout.py adapter  (version-specific glue: see TODOs)
   eval/
-    smoke.sh              # sanity: can the env stand up and can gold solve.py win?
+    smoke.sh              # sanity: can one challenge stand up and be reached?
+    build_sweep.py        # which challenges build+run today -> build_sweep.csv (the trainable pool)
+    confirm_solve.py      # drive a known SSTI to a real flag capture; assert the +1.0 reward fires
+    build_sweep.csv       # (generated) per-challenge builds/runs/reachable + failure note
   requirements.txt
 ```
 
@@ -83,8 +86,12 @@ rl/
 ./env/fetch_benchmarks.sh
 python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
 
-# 1. prove the environment stands up and is winnable (uses Argus gold exploits)
-./eval/smoke.sh argus ARGUS-001-26
+# 1. lock down the trainable pool: which challenges build+run here today?
+python -m eval.build_sweep xbow          # writes eval/build_sweep.csv
+python -m eval.confirm_solve             # assert the capture-backed +1.0 reward fires
+
+# 1b. quick single-challenge sanity
+./eval/smoke.sh xbow XBEN-053-24
 
 # 2. serve the policy for rollouts (small model; leaves cards for LoRA training)
 MODEL=Qwen/Qwen3-4B ../vault-ctf/scripts/serve-model.sh   # or verl's own rollout engine
@@ -118,7 +125,12 @@ python -m agent.rollout --suite xbow --challenge XBEN-001-24 --max-turns 25
   per-episode reset (drop captured session state) so rollouts don't leak between
   episodes. Tracked separately from this Python harness.
 - **Curriculum.** Start on `level: 1` challenges only; widen to 2–3 once solve
-  rate on level 1 is stable. `env/challenge.py` exposes `level` for this.
+  rate on level 1 is stable. `env/challenge.py` exposes `level` for this, and
+  `train_challenges()` already filters to `buildable("xbow")` level-1 first.
+- **Benchmark bit-rot.** Many 2024 XBOW challenges pin EOL base images whose apt
+  repos now 404, so only a subset builds today. `eval/build_sweep.py` records the
+  usable set in `build_sweep.csv`; `challenge.buildable()` reads it so the
+  trainer never picks a challenge that cannot come up.
 
 [xbow]: https://github.com/xbow-engineering/validation-benchmarks
 [argus]: https://github.com/pensar-x/argus-validation-benchmarks

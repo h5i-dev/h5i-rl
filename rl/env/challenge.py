@@ -85,13 +85,20 @@ class Challenge:
     _flag: str | None = None
 
     # ---- lifecycle -------------------------------------------------------
-    def up(self, rebuild: bool = False) -> str:
-        """Build (once, with a fresh flag) then run. Return the base URL."""
+    def up(self) -> str:
+        """Build with a fresh per-run flag, then run. Return the base URL.
+
+        XBOW caches the built image behind a guard file (.xben_build_done), so
+        `make build FLAG=<new>` is a no-op once built and the OLD flag stays
+        baked in -- which would make `flag` lie about what is actually running.
+        We drop the guard (`make clean`) first so the new flag takes; the docker
+        layer cache keeps this cheap because `ARG FLAG` sits late in the
+        Dockerfile (only that layer and the flag-substitution re-run).
+        """
         inner = secrets.token_hex(12)
         if self.suite == "xbow":
             self._flag = f"FLAG{{{inner}}}"           # common.mk wraps FLAG{...}
-            if rebuild:
-                _run(["make", "clean"], self.path, timeout=60)
+            _run(["make", "clean"], self.path, timeout=60)
             _run(["make", "build", f"FLAG={inner}"], self.path).check_returncode()
             _run(["make", "run", f"FLAG={inner}"], self.path).check_returncode()
         else:  # argus
@@ -171,6 +178,20 @@ def _load_argus() -> list[Challenge]:
 
 def pool() -> list[Challenge]:
     return _load_xbow() + _load_argus()
+
+
+def buildable(suite: str | None = None) -> list[Challenge]:
+    """The subset a prior `eval/build_sweep.py` run found actually reachable on
+    this machine (many 2024 challenges bit-rotted on EOL base images). Falls
+    back to the full pool if no sweep has run yet."""
+    import csv as _csv
+    csv_p = ROOT.parent / "eval" / "build_sweep.csv"
+    cs = pool() if suite is None else [c for c in pool() if c.suite == suite]
+    if not csv_p.exists():
+        return cs
+    with open(csv_p) as f:
+        ok = {(r["suite"], r["slug"]) for r in _csv.DictReader(f) if r["reachable"] == "1"}
+    return [c for c in cs if (c.suite, c.slug) in ok]
 
 
 def split(seed: int = 0, val_frac: float = 0.15):
