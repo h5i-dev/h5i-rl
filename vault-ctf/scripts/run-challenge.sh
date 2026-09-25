@@ -11,7 +11,7 @@ set -euo pipefail
 SLUG="${1:?usage: run-challenge.sh <slug> <url> [hint]}"
 URL="${2:?usage: run-challenge.sh <slug> <url> [hint]}"
 HINT="${3:-}"
-ROOT=/home/ht2673/Dev/Bench/vault-ctf
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WS="$ROOT/challenges/$SLUG"
 mkdir -p "$WS"
 

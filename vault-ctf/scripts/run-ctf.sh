@@ -3,7 +3,7 @@
 # `codex exec` (not the TUI) so the run is unattended and the log is clean;
 # stdin must be closed or exec blocks waiting for more input.
 set -euo pipefail
-cd /home/ht2673/Dev/Bench/vault-ctf
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # NB: tmux new-session does not inherit this shell's exports -- the tmux
 # server has its own environment -- so the key is set inline on the command.
 

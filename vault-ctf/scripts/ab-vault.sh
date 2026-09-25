@@ -7,7 +7,7 @@ set -euo pipefail
 ARM="${1:?usage: ab-vault.sh <old|new> <n>}"
 N="${2:?usage: ab-vault.sh <old|new> <n>}"
 SLUG="ab-$ARM-$N"
-ROOT=/home/ht2673/Dev/Bench/vault-ctf
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 case "$ARM" in
   old) h5i plugin install websec --from /tmp/ht2673-websec-OLD --force >/dev/null 2>&1 ;;
