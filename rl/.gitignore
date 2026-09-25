@@ -1,0 +1,10 @@
+# Cloned benchmark suites (large, own upstreams)
+env/benchmarks/
+# Training artifacts
+checkpoints/
+wandb/
+*.log
+# Python
+.venv/
+__pycache__/
+*.pyc

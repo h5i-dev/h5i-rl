@@ -1,0 +1,9 @@
+# Environment + rollout (works without a GPU; enough to run eval/smoke.sh and a
+# standalone rollout against any OpenAI-compatible endpoint).
+openai>=1.40
+
+# Training. verl pulls in torch/vllm/ray/transformers/peft; pin verl to the
+# commit you validated the agent-loop glue against (see train/agent_loop.py).
+# Left unpinned here on purpose so you choose the version for your CUDA/vLLM.
+# verl
+# vllm

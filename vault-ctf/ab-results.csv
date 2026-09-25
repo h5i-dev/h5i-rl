@@ -1,0 +1,9 @@
+arm,run,solved,requests,tokens,show,replay,diff
+old,1,yes,-1
+-1,54627,3,14,1
+old,2,no,12,48317,4,15,1
+old,3,no,55,0,46,46,1
+new,1,yes,1,67218,3,16,1
+new,2,no,20,79802,6,19,1
+new,3,yes,-1
+-1,51504,4,15,1

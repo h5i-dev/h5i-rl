@@ -1,0 +1,64 @@
+# verl GRPO config for h5i agentic RL on the 4x RTX 3090 box.
+#
+# GRPO (adv_estimator: grpo) drops PPO's critic, which is what lets rollout and
+# training co-exist on 4x24GB. The policy is small (Qwen3-4B) with LoRA; the 27B
+# cyber models are NOT trained here, they stay as eval baselines in ../eval.
+#
+# CAUTION: verl's config keys and its multi-turn/agent-loop plumbing move between
+# releases. This is written against verl's async server-mode rollout (the policy
+# is served, our agent loop in agent_loop.py calls it). Pin verl to the commit
+# you install and reconcile the keys marked TODO with that version's docs.
+
+algorithm:
+  adv_estimator: grpo          # group-relative advantages, no value network
+  kl_ctrl:
+    kl_coef: 0.001             # light KL to the frozen ref policy; raise if it drifts
+
+data:
+  train_files: null            # unused: episodes come from our env, not a static dataset
+  val_files: null
+  train_batch_size: 32         # prompts (challenges) per step
+  max_prompt_length: 8192
+  max_response_length: 120000  # a full multi-turn agent trajectory; 128k ctx model
+
+actor_rollout_ref:
+  model:
+    path: Qwen/Qwen3-4B
+    lora_rank: 32              # LoRA: the only trainable params -> fits on-box
+    lora_alpha: 64
+    target_modules: all-linear
+  actor:
+    optim:
+      lr: 1.0e-6
+    ppo_mini_batch_size: 16
+    ppo_micro_batch_size_per_gpu: 1
+    use_kl_loss: true
+    fsdp_config:
+      param_offload: true      # 3090s are tight; offload optimizer/params to CPU
+      optimizer_offload: true
+  rollout:
+    name: vllm
+    mode: async               # server mode: agent_loop.py drives multi-turn h5i
+    n: 8                       # GRPO group size: 8 episodes per challenge
+    temperature: 0.9
+    tensor_model_parallel_size: 2   # rollout on 2 cards; training FSDP on the rest
+    gpu_memory_utilization: 0.55
+    max_model_len: 131072
+    # TODO(verl-version): point verl's agent-loop / multi-turn interaction at
+    #   rl.train.agent_loop:H5iAgentLoop  (key name varies: multi_turn.interaction,
+    #   agent.agent_loop_config_path, or a custom rollout class).
+    multi_turn:
+      enable: true
+      max_turns: 25
+
+trainer:
+  n_gpus_per_node: 4
+  nnodes: 1
+  total_epochs: 1
+  total_training_steps: 400
+  save_freq: 25
+  test_freq: 25
+  project_name: h5i-rl
+  experiment_name: qwen3-4b-grpo-lora
+  logger: [console]           # add 'wandb' if you want curves
+  default_local_dir: checkpoints
