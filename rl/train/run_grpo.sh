@@ -29,6 +29,7 @@ export PYTHONPATH="$RL:$RL/train:${PYTHONPATH:-}"
 export H5I_RL_STATE_ROOT="${H5I_RL_STATE_ROOT:-/tmp/h5i-rl-sessions}"
 
 exec "$VERL_PY" -m verl.trainer.main_ppo \
+  +ray_kwargs.ray_init.include_dashboard=False \
   algorithm.adv_estimator=grpo \
   data.train_files="$RL/data/train.parquet" \
   data.val_files="$RL/data/val.parquet" \
@@ -40,8 +41,12 @@ exec "$VERL_PY" -m verl.trainer.main_ppo \
   actor_rollout_ref.model.lora_rank=32 \
   actor_rollout_ref.model.lora_alpha=64 \
   actor_rollout_ref.model.target_modules=all-linear \
+  +actor_rollout_ref.model.override_config.attn_implementation=sdpa \
   actor_rollout_ref.actor.optim.lr=1e-6 \
   actor_rollout_ref.actor.ppo_mini_batch_size=8 \
+  actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
+  actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
+  actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=2 \
   actor_rollout_ref.actor.use_kl_loss=True \
   actor_rollout_ref.actor.fsdp_config.param_offload=True \
   actor_rollout_ref.actor.fsdp_config.optimizer_offload=True \
