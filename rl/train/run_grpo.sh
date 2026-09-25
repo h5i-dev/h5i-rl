@@ -2,10 +2,15 @@
 # GRPO training: policy learns to drive h5i at the challenge pool.
 #
 # Prereqs (see README "What still needs doing"):
-#   1. verl venv with a torch built for THIS driver (CUDA 12.6 -> cu124, NOT the
-#      cu130 wheel verl pulls by default) and a matching vllm. Set VERL_PY to it.
-#   2. The GPUs must be free -- stop the eval vLLM server first (it fills all 4).
+#   1. verl venv with the driver-compatible stack (see requirements.txt):
+#      verl 0.8.0 + vllm 0.8.5.post1 + torch 2.6.0+cu124 + transformers 4.51.3.
+#      (verl 0.9.1 needs vllm>=0.18 -> CUDA 13.0, too new for this 12.6 driver.)
+#      Set VERL_PY to that venv's python.
+#   2. The GPUs must be free -- stop the eval vLLM server first (it fills all 4):
+#      docker stop vllm-cyber   # restart later with vault-ctf/scripts/serve-model.sh
 #   3. A challenge pool + dataset:  python -m env.serve_pool --n 8 --out data
+# If the FSDP model demands flash-attn (not installed by --no-deps), add:
+#   actor_rollout_ref.model.attn_implementation=sdpa
 #
 # verl's idiom is CLI overrides on top of its ppo_trainer defaults (this is the
 # runnable source of truth; train/grpo.yaml documents the same settings + why).

@@ -128,12 +128,17 @@ python -m env.serve_pool --down              # tear the pool down when finished
   ToolAgentLoop, with `train/h5i_reward.py` as the reward and `env/serve_pool.py`
   producing the pool + dataset. The tool config, tool schemas and reward all load
   and score correctly against an installed verl 0.9.1.
-- **Before an actual GPU run** (two environment gates, not code):
-  (1) The verl venv's default torch is a **cu130** wheel, but this box's driver is
-  **CUDA 12.6** — reinstall torch built for cu124 (or cu121) plus a matching
-  `vllm`, or verl will refuse to use the GPUs. (2) The eval vLLM server fills all
-  4 cards; **stop it first** so training has memory. Then `env/serve_pool.py` +
-  `train/run_grpo.sh`.
+- **Driver-compatible stack: solved.** verl 0.9.1's rollout needs `vllm>=0.18`
+  (→ torch 2.11 / CUDA 13.0), too new for this box's **CUDA 12.6** driver. verl
+  **0.8.0** supports `vllm>=0.8.5` and leaves transformers unpinned, giving a set
+  that holds together and sees the GPUs: `verl 0.8.0 + vllm 0.8.5.post1 + torch
+  2.6.0+cu124 + transformers 4.51.3` (see requirements.txt; verified
+  `torch.cuda` sees all 4 cards and the glue imports/scores). On a CUDA-13 driver,
+  use verl's native torch-2.11/cu130 stack instead.
+- **Remaining before a run:** free the GPUs (`docker stop vllm-cyber`; the eval
+  server fills all 4), then `env/serve_pool.py` + `train/run_grpo.sh`. flash-attn
+  is not installed by `--no-deps`; pass `...model.attn_implementation=sdpa` if the
+  FSDP model demands it.
 - **h5i-side changes (the `h5i` `rl-env` branch).** Two would materially help and
   belong in h5i, not here: (1) a `--json` flag on every read verb so observations
   are structured for *all* commands, not just `websec requests`; (2) a clean

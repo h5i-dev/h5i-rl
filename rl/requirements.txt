@@ -2,8 +2,17 @@
 # standalone rollout against any OpenAI-compatible endpoint).
 openai>=1.40
 
-# Training. verl pulls in torch/vllm/ray/transformers/peft; pin verl to the
-# commit you validated the agent-loop glue against (see train/agent_loop.py).
-# Left unpinned here on purpose so you choose the version for your CUDA/vLLM.
-# verl
-# vllm
+# Training stack. The consistent, driver-compatible combo we validated on this
+# box (NVIDIA driver 560.35.03 = CUDA 12.6, 4x RTX 3090). verl 0.9.1's rollout
+# requires vllm>=0.18 which needs CUDA 13.0 -> too new for this driver; verl
+# 0.8.0 supports vllm>=0.8.5 and leaves transformers unpinned, so this set holds
+# together and torch.cuda works:
+#
+#   pip install vllm==0.8.5.post1 --extra-index-url https://download.pytorch.org/whl/cu124
+#   pip install transformers==4.51.3          # 5.x breaks vllm 0.8.5 import
+#   pip install -e /path/to/verl@v0.8.0 --no-deps
+#   # flash-attn optional; if the FSDP model demands it, either install it or
+#   # pass actor_rollout_ref.model.attn_implementation=sdpa
+#
+# Result: verl 0.8.0.dev | vllm 0.8.5.post1 | torch 2.6.0+cu124 | transformers 4.51.3
+# On a CUDA-13-capable driver, use verl's native stack instead (torch 2.11 cu130).
