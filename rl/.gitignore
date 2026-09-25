@@ -11,3 +11,5 @@ __pycache__/
 # Generated pool + dataset
 data/
 pool_manifest.json
+# verl run outputs
+outputs/

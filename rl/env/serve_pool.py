@@ -22,10 +22,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-from challenge import buildable
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from env.challenge import buildable  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent
 MANIFEST = ROOT / "pool_manifest.json"

@@ -27,9 +27,11 @@ command -v h5i >/dev/null || { echo "h5i not on PATH"; exit 1; }
 # import agent.tools / reward.reward. H5I_RL_STATE_ROOT isolates per-rollout h5i.
 export PYTHONPATH="$RL:$RL/train:${PYTHONPATH:-}"
 export H5I_RL_STATE_ROOT="${H5I_RL_STATE_ROOT:-/tmp/h5i-rl-sessions}"
+export VLLM_USE_V1=1                          # verl's async server uses vllm's V1 AsyncLLM engine
 
 exec "$VERL_PY" -m verl.trainer.main_ppo \
   +ray_kwargs.ray_init.include_dashboard=False \
+  +ray_kwargs.ray_init.runtime_env.env_vars.VLLM_USE_V1=\"1\" \
   algorithm.adv_estimator=grpo \
   data.train_files="$RL/data/train.parquet" \
   data.val_files="$RL/data/val.parquet" \
@@ -52,6 +54,7 @@ exec "$VERL_PY" -m verl.trainer.main_ppo \
   actor_rollout_ref.actor.fsdp_config.optimizer_offload=True \
   actor_rollout_ref.rollout.name=vllm \
   actor_rollout_ref.rollout.mode=async \
+  actor_rollout_ref.rollout.logprobs_mode=null \
   actor_rollout_ref.rollout.n=8 \
   actor_rollout_ref.rollout.temperature=0.9 \
   actor_rollout_ref.rollout.tensor_model_parallel_size=2 \
